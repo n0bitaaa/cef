@@ -1,0 +1,11 @@
+@media only screen and (max-width:575px){
+    .container-fluid .list-group-item i{
+        margin:0 auto !important;
+    }
+    .container-fluid>.row>.col-2{
+        padding:5px;
+    }
+    tbody{
+        font-size:0.85rem;
+    }
+}

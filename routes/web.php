@@ -20,3 +20,19 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::group(['prefix'=>'admin'],function(){
+    Route::get('/login','Auth\LoginController@showLogin')->name('showLogin');
+
+    Route::post('/login','Auth\LoginController@postLogin')->name('postLogin');
+
+    Route::get('/register','Auth\RegisterController@showRegister')->name('showRegister');
+
+    Route::post('/register','Auth\RegisterController@postRegister')->name('postRegister');
+
+    Route::post('/logout','Auth\LoginController@logout')->name('adminLogout');
+});
+
+Route::group(['prefix'=>'admin','middleware'=>'auth:admin'],function(){
+    Route::resource('/admins','AdminController');
+});

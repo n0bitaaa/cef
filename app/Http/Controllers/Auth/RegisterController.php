@@ -8,6 +8,9 @@ use App\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Auth;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 
 class RegisterController extends Controller
 {
@@ -50,9 +53,11 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'name' => ['required', 'string', 'max:255','unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'phone' => ['required','string'],
+            'address' => ['required','string','max:255'],
+            'admin_id' => ['required'],
         ]);
     }
 
@@ -66,8 +71,38 @@ class RegisterController extends Controller
     {
         return User::create([
             'name' => $data['name'],
-            'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'phone' => $data['phone'],
+            'address' => $data['address'],
         ]);
+    }
+
+    public function guardLogin(Request $request,$guard){
+        return Auth::guard($guard)->attempt([
+            'name' => $request->name,
+            'password' => $request->password,
+        ],
+        $request->get('remember')
+    );
+    }
+
+    public function showRegister(){
+        return view('auth.register',['uri'=>'admin']);
+    }
+
+    public function postRegister(Request $request){
+        $request->validate([
+            'name' => 'string|unique:admins',
+            'password' => 'required|string|min:8|confirmed'
+        ]);
+        \App\Admin::create([
+            'name' => $request->name,
+            'code' => Str::uuid(),
+            'password' => Hash::make($request->password),
+        ]);
+        if($this->guardLogin($request,'admin')){
+            return redirect()->intended('admin/admins');
+        }
+        return back()->withInput($request->only('name','remember'));
     }
 }
