@@ -1,7 +1,18 @@
 @extends("layouts.template")
 @section('content')
-    <div class="col-12 p-0">
+    <nav class="navbar">
         <h4>Admins</h4>
+        <form class="d-flex mb-1" action="{{ route('admins.search') }}" method="post">
+        @csrf
+            <input class="form-control me-2" name="admin" placeholder="Search" aria-label="Search" autocomplete="off" list="admins">
+            <datalist id="admins">
+                @foreach(App\Admin::all() as $admin)
+                    <option value="{{$admin->name}}">{{ $admin->name }}</option>
+                @endforeach
+            </datalist>
+            <button class="btn btn-outline-dark" type="submit">Search</button>
+        </form>
+    </nav>
     @if(Session::has('create'))
         <p class="alert alert-success">{{ Session::get('create') }}</p>
     @endif
@@ -23,7 +34,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($admins as $admin)
+                    @forelse($admins as $admin)
                     <tr>
                         <td>{{ $admin->id }}</td>
                         <td>{{ $admin->name }}</td>
@@ -96,7 +107,17 @@
                         @endif
                         </td>
                     </tr>
-                    @endforeach
+                    @empty
+                       <tr>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <p class="text-center">No data</p>
+                            </td>
+                            <td></td>
+                            <td></td>
+                       </tr>
+                    @endforelse
                 </tbody>
             </table>
             {{ $admins->links() }}

@@ -35,7 +35,7 @@
         <div class="row mb-4">
             <div class="col-12">
                 <label for="w_week" class="form-label">Waiting week</label>
-                <input type="number" name="w_week" class="form-control" id="w_week" placeholder="Enter your waiting week">
+                <input type="number" name="w_week" class="form-control" min="1" id="w_week" placeholder="Enter your waiting week" onkeypress="return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57">
                 @error('w_week')
                     <small class="text-danger">{{ "This field is reqired" }}</small>
                 @enderror

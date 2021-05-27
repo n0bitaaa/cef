@@ -10,7 +10,9 @@
         <div class="card shadow">
             <div class="card-header">
                 <h5 class="d-inline-block mt-2">Notifications</h5>
-                <a href="{{ route('readAll') }}" class="float-end btn btn-primary">Mark all as read</a>
+                @if(auth()->user()->unreadNotifications->count())
+                    <a href="{{ route('readAll') }}" class="float-end btn btn-primary">Mark all as read</a>
+                @endif
             </div>
             <div class="card-body">
                 @forelse(auth()->user()->unreadNotifications as $notification)

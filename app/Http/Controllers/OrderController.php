@@ -9,6 +9,7 @@ use Session;
 use App\Product;
 use Carbon\Carbon;
 use DB;
+use App\User;
 
 class OrderController extends Controller
 {
@@ -19,7 +20,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::paginate(10);
+        $orders = Order::orderBy('state')->orderBy('due_date')->paginate(10);
         return view('order.index',compact('orders'));
     }
 
@@ -107,7 +108,38 @@ class OrderController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'products' => 'required|array',
+            'products.*'=>'required',
+            'w_week'=>'required',
+        ]);
+        $products = $request->input('products',[]);
+        $quantities = $request->input('quantities',[]);
+        $remarks = $request->input('remarks',[]);
+        $total = 0;
+        for($product=0;$product<count($products);$product++){
+            $productprice = Product::findOrFail($products[$product])->price;
+            $quantity = $quantities[$product];
+            $total += $productprice*$quantity;
+        }
+        $due_date = Carbon::now()->addWeeks($request->w_week);
+        $order = Order::findOrFail($id);
+        $order->totl_qty = array_sum($quantities);
+        $order->totl_amt = $total;
+        $order->state = 0;
+        $order->due_date = $due_date;
+        $order->w_week = $request->w_week;
+        $order->admin_id = Auth::guard('admin')->user()->id;
+        $order->update();
+        $order->products()->newPivotStatement()->where('order_id',$id)->delete();
+        for($product=0;$product<count($products);$product++){
+            $productprice = Product::findOrFail($products[$product])->price;
+            if($products[$product] != ''){
+                $order->products()->attach($products[$product],['qty'=> $quantities[$product],'rmk'=>$remarks[$product],'price'=>$productprice]);
+            }
+        }
+        Session::flash('update',"Updated order($id) Successfully!");
+        return redirect()->route('orders.index');
     }
 
     /**
@@ -128,7 +160,18 @@ class OrderController extends Controller
 
     public function orderComplete($id){
         Order::where('id',$id)->update(['state'=>1]);
-        Session::flash('complete',"Finshed Successfully!");
+        Session::flash('complete',"Finshed Order($id) Successfully!");
         return redirect()->route('orders.index');
+    }
+
+    public function search(Request $request){
+        $users = User::where('name','LIKE','%'.$request->order.'%')->get();
+        $orders = Order::where('user_id','brhtaeyamllmthibu')->paginate(10);
+        if($users){
+            foreach($users as $user){
+                $orders = Order::where('user_id','LIKE','%'.$user->id.'%')->paginate(10);
+            }
+        }
+        return view('order.search',compact('orders'));
     }
 }

@@ -114,4 +114,9 @@ class AdminController extends Controller
         $newCode = Str::uuid();
         return $newCode;
     }
+
+    public function search(Request $request){
+        $admins = Admin::where('name','LIKE','%'.$request->admin.'%')->paginate(10);
+        return view('admin.index',compact('admins'));
+    }
 }

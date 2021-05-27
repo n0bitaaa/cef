@@ -130,4 +130,11 @@ class ProductController extends Controller
         Session::flash('delete',"Deleted Successfully!");
         return redirect()->route('products.index');
     }
+
+    public function search(Request $request){
+        $products = Product::where('name','LIKE','%'.$request->product.'%')
+                    ->orWhere('price','LIKE','%'.$request->product.'%')
+                    ->paginate(10);
+        return view('product.index',compact('products'));
+    }
 }

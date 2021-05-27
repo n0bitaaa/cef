@@ -95,11 +95,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td>Remaining Days</td>
-                                                    @if($order->state==0)
-                                                        <td>{{ Carbon\Carbon::now()->diffInDays($order->due_date) }} days</td>
-                                                    @else
-                                                        <td> -</td>
-                                                    @endif
+                                                    <td>{{ Carbon\Carbon::now()->diffInDays($order->due_date) }} days</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Due Date</td>
@@ -127,11 +123,11 @@
                             <i class="fas fa-undo-alt"></i>
                         </button>
                         @endif
-                        <div class="modal fade text-start" id="reorderModal-{{ $order->id }}" tabindex="-1" aria-labelledby="reorderModal-{{ $order->id }}" aria-hidden="true">
+                        <div class="modal fade text-start" id="reorderModal-{{ $order->id }}" tabindex="-1" aria-labelledby="reorderModal" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="reorderModal-{{ $order->id }}">Reordering order({{ $order->id }})</h5>
+                                        <h5 class="modal-title" id="reorderModal">Reordering order({{ $order->id }})</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <form action="{{ route('orders.update',$order->id) }}" method="post">
@@ -189,7 +185,7 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td>No order.</td>
+                        <td>No data</td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -199,6 +195,7 @@
         </table>
         {{ $orders->links() }}
     </div>
+</div>
 @endsection
 @push('functions')
 let row_number = 1;

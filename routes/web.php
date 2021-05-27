@@ -52,4 +52,12 @@ Route::group(['prefix'=>'admin','middleware'=>'auth:admin'],function(){
     Route::get('/readOne/{id?}','NotificationController@readOne')->name('readOne');
 
     Route::get('/readAll','NotificationController@readAll')->name('readAll');
+
+    Route::post('/admins/search','AdminController@search')->name('admins.search');
+
+    Route::post('/users/search','UserController@search')->name('users.search');
+
+    Route::post('/products/search','ProductController@search')->name('products.search');
+
+    Route::post('/orders/search','OrderController@search')->name('orders.search');
 });

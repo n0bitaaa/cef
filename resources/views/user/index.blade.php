@@ -1,7 +1,19 @@
 @extends('layouts.template')
 @section('content')
     <div class="col-12 p-0">
-        <h4>Users</h4>
+        <nav class="navbar">
+            <h4>Users</h4>
+            <form class="d-flex mb-1" action="{{ route('users.search') }}" method="post">
+            @csrf
+                <input class="form-control me-2" name="user" placeholder="Search" aria-label="Search" autocomplete="off" list="users">
+                <datalist id="users">
+                    @foreach(App\User::all() as $user)
+                        <option value="{{$user->name}}">{{ $user->name }}</option>
+                    @endforeach
+                </datalist>
+                <button class="btn btn-outline-dark" type="submit">Search</button>
+            </form>
+        </nav>
         @if(Session::has('success'))
             <p class="alert alert-success">{{ Session::get('success') }}</p>
         @endif
@@ -25,7 +37,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($users as $user)
+                    @forelse($users as $user)
                     <tr>
                         <td>{{ $user->id }}</td>
                         <td>{{ $user->name }}</td>
@@ -93,7 +105,17 @@
                             </form>
                         </td>
                     </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>No data</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
             {{ $users->links() }}

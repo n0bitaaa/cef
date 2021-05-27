@@ -124,4 +124,10 @@ class UserController extends Controller
         Session::flash('delete',"Deleted Successfully!");
         return redirect()->route('users.index');
     }
+    public function search(Request $request){
+        $users = User::where('name','LIKE','%'.$request->user.'%')
+                ->orWhere('address','LIKE','%'.$request->user.'%')
+                ->paginate(10);
+        return view('user.index',compact('users'));
+    }
 }
