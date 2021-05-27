@@ -7,6 +7,10 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Auth;
+use Cache;
+use App\Admin;
+use Notification;
+use App\Notifications\UserLoginNotification;
 
 class LoginController extends Controller
 {
@@ -66,13 +70,20 @@ class LoginController extends Controller
             'code' => 'required',
         ]);
         if($this->guardLogin($request,'admin')){
-            return redirect()->intended('/admin/admins');
+            return redirect()->route('admins.index');
         }
         return back()->withInput($request->only('name','remember'));
     }
 
     public function logout(){
-        Auth::guard('admin')->logout();
+        if(Auth::guard('web')->check()){
+            Cache::forget('user-is-online-'.Auth::user()->id,true);
+            Auth::logout();
+        }
+        if(Auth::guard('admin')->check()){
+            Cache::forget('admin-is-online-'.Auth::guard('admin')->id(),true);
+            Auth::guard('admin')->logout();
+        }
         return redirect()->intended('/');
     }
 }

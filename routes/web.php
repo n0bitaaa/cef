@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +18,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes();
+Auth::routes(['register'=>false]);
 
 Route::get('/home', 'HomeController@index')->name('home');
 
@@ -34,5 +35,21 @@ Route::group(['prefix'=>'admin'],function(){
 });
 
 Route::group(['prefix'=>'admin','middleware'=>'auth:admin'],function(){
-    Route::resource('/admins','AdminController');
+    Route::resource('/admins','AdminController')->only(['index','update','destroy']);
+
+    Route::resource('/users','UserController')->except(['show','edit']);
+
+    Route::resource('/products','ProductController')->except(['show','edit']);
+
+    Route::resource('/orders','OrderController')->except(['show','edit']);
+
+    Route::get('/orders/complete/{id?}','OrderController@orderComplete')->name('orderComplete');
+
+    Route::post('/getnewCode','AdminController@newCode')->name('newCode');
+
+    Route::get('/notifications','NotificationController@index')->name('noti_index');
+
+    Route::get('/readOne/{id?}','NotificationController@readOne')->name('readOne');
+
+    Route::get('/readAll','NotificationController@readAll')->name('readAll');
 });

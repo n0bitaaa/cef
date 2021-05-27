@@ -19,6 +19,7 @@ class CreateOrdersProductsTable extends Migration
             $table->unsignedBigInteger('product_id');
             $table->string('qty');
             $table->double('price');
+            $table->text('rmk')->nullable();
             $table->timestamps();
 
             $table->foreign('order_id')->references('id')->on('orders');

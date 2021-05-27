@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Admin;
+use Session;
+use Hash;
+use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
@@ -14,7 +17,7 @@ class AdminController extends Controller
      */
     public function index()
     {
-        $admins = Admin::paginate(5);
+        $admins = Admin::paginate(10);
         return view('admin.index',compact('admins'));
     }
 
@@ -36,7 +39,7 @@ class AdminController extends Controller
      */
     public function store(Request $request)
     {
-        //
+    
     }
 
     /**
@@ -70,7 +73,26 @@ class AdminController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'name'=>'required|min:4'
+        ]);
+        $admin = Admin::findOrFail($id);
+        $admin->name=$request->name;
+        if($request->code){
+            $admin->code = $request->code;
+        }
+        if($request->password){
+            $request->validate([
+                'password' => 'min:8',
+                'n_password'=> 'required|min:8',
+            ]);
+            if(Hash::check($request->password,$admin->password)){
+                $admin->password = bcrypt($request->n_password);
+            }
+        }
+        $data = $admin->update();
+        Session::flash('update','Updated Successfully!');
+        return redirect()->route('admins.index');
     }
 
     /**
@@ -81,6 +103,15 @@ class AdminController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $admin = Admin::findOrFail($id);
+        $admin->delete();
+        DB::statement("ALTER TABLE admins AUTO_INCREMENT = 1");
+        Session::flash('delete','Deleted Successfully!');
+        return redirect()->route('admins.index');
+    }
+
+    public function newCode(Request $request){
+        $newCode = Str::uuid();
+        return $newCode;
     }
 }

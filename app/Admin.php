@@ -4,10 +4,16 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Cache;
+use Illuminate\Notifications\Notifiable;
 
 class Admin extends Authenticatable
 {
-    protected $guarded = ['id','updated_at'];
+    use Notifiable;
+    
+    protected $guarded = 'admin';
+
+    protected $fillable = ['name','code','password'];
 
     public function products(){
         return $this->hasMany('App\Product');
@@ -19,5 +25,9 @@ class Admin extends Authenticatable
 
     public function users(){
         return $this->hasMany('App\User');
+    }
+
+    public function isOnline(){
+        return Cache::has('admin-is-online-'.$this->id);
     }
 }

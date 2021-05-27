@@ -101,7 +101,7 @@ class RegisterController extends Controller
             'password' => Hash::make($request->password),
         ]);
         if($this->guardLogin($request,'admin')){
-            return redirect()->intended('admin/admins');
+            return redirect()->route('admins.index');
         }
         return back()->withInput($request->only('name','remember'));
     }
