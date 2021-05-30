@@ -20,7 +20,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::orderBy('state')->orderBy('due_date')->paginate(10);
+        $orders = Order::orderBy('state')->orderBy('queue')->paginate(10);
         return view('order.index',compact('orders'));
     }
 
@@ -58,12 +58,14 @@ class OrderController extends Controller
             $total += $productprice*$quantity;
         }
         $due_date = Carbon::now()->addWeeks($request->w_week);
+        $queue = Order::where('state',0)->count();
         $order = Order::create([
             'totl_qty'=>array_sum($quantities),
             'totl_amt'=>$total,
             'state'=> 0,
             'due_date'=>$due_date,
             'w_week'=>$request->w_week,
+            'queue'=>$queue+1,
             'user_id'=>$request->user_id,
             'admin_id'=>Auth::guard('admin')->user()->id,
         ]);

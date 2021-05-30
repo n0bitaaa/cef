@@ -20,6 +20,7 @@ class CreateOrdersTable extends Migration
             $table->integer('state');
             $table->string('due_date');
             $table->string('w_week');
+            $table->string('queue');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('admin_id');
             $table->timestamps();

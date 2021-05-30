@@ -14,13 +14,11 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/','Auth\LoginController@showLoginForm')->name('login');
 
-Auth::routes(['register'=>false]);
+Route::post('/','Auth\LoginController@login');
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/home','FrontendController@index')->name('frontend.index')->middleware('auth');
 
 Route::group(['prefix'=>'admin'],function(){
     Route::get('/login','Auth\LoginController@showLogin')->name('showLogin');
@@ -31,7 +29,7 @@ Route::group(['prefix'=>'admin'],function(){
 
     Route::post('/register','Auth\RegisterController@postRegister')->name('postRegister');
 
-    Route::post('/logout','Auth\LoginController@logout')->name('adminLogout');
+    Route::post('/logout','Auth\LoginController@logout')->name('Logout');
 });
 
 Route::group(['prefix'=>'admin','middleware'=>'auth:admin'],function(){
@@ -52,6 +50,8 @@ Route::group(['prefix'=>'admin','middleware'=>'auth:admin'],function(){
     Route::get('/readOne/{id?}','NotificationController@readOne')->name('readOne');
 
     Route::get('/readAll','NotificationController@readAll')->name('readAll');
+
+    Route::get('/deleteAll','NotificationController@deleteAll')->name('deleteAll');
 
     Route::post('/admins/search','AdminController@search')->name('admins.search');
 

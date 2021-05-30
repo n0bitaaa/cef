@@ -21,6 +21,9 @@ class RedirectIfAuthenticated
         if (Auth::guard($guard)->check()) {
             return redirect()->route('admins.index');
         }
+        if(Auth::check()){
+            return redirect()->route('frontend.index');
+        }
 
         return $next($request);
     }

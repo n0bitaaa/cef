@@ -24,4 +24,10 @@ class NotificationController extends Controller
         Session::flash('readAll',"Read All Successfully!");
         return redirect()->route('noti_index');
     }
+
+    public function deleteAll(){
+        Admin::findOrFail(Auth::guard('admin')->user()->id)->notifications()->delete();
+        Session::flash('deleteAll',"Deleted All Successfully!");
+        return redirect()->route('noti_index');
+    }
 }

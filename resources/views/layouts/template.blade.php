@@ -91,7 +91,7 @@
                                 <li>
                                     <a class="dropdown-item text-center" onclick="document.getElementById('logout').submit();"><i class="fas fa-sign-out-alt me-3"></i>Logout</a>
                                 </li>
-                                <form action="{{ route('adminLogout') }}" method="post" id="logout">
+                                <form action="{{ route('Logout') }}" method="post" id="logout">
                                     @csrf
                                 </form>
                             </ul>

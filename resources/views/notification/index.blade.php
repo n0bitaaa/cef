@@ -7,11 +7,17 @@
     @if(Session::has('readAll'))
             <p class="alert alert-success">{{ Session::get('readAll') }}</p>
     @endif
+    @if(Session::has('deleteAll'))
+            <p class="alert alert-danger">{{ Session::get('deleteAll') }}</p>
+    @endif
         <div class="card shadow">
             <div class="card-header">
                 <h5 class="d-inline-block mt-2">Notifications</h5>
                 @if(auth()->user()->unreadNotifications->count())
-                    <a href="{{ route('readAll') }}" class="float-end btn btn-primary">Mark all as read</a>
+                    <a href="{{ route('readAll') }}" class="float-end btn btn-primary d-inline-block"><i class="far fa-eye d-sm-none d-block"></i><span class="d-none d-sm-block">Mark all as read</span></a>
+                @endif
+                @if(auth()->user()->notifications->count())
+                    <a href="{{ route('deleteAll') }}" class="float-end btn btn-danger d-inline-block me-3"><i class="fas fa-trash d-sm-none d-block"></i><span class="d-none d-sm-block">Delete all</span></a>
                 @endif
             </div>
             <div class="card-body">

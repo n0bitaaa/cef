@@ -34,6 +34,7 @@
                     <th>User</th>
                     <th>Order Date</th>
                     <th>Due Date</th>
+                    <th>Queue</th>
                     <th>State</th>
                     <th>Createdby</th>
                     <th>Action</th>
@@ -46,6 +47,13 @@
                     <td>{{ $order->user->name }}</td>
                     <td>{{ Carbon\Carbon::parse($order->updated_at)->toFormattedDateString() }}</td>
                     <td>{{ \Carbon\Carbon::parse($order->due_date)->toFormattedDateString() }}</td>
+                    <td>
+                        @if( App\Order::where('state',0)->orderBy('queue')->first()->queue == $order->queue)
+                            <span style="background-color:#3CB371;color:white;border-radius:20px;padding:2px 5px;">{{ $order->queue }}</span>
+                        @else
+                            {{ $order->queue }}
+                        @endif
+                    </td>
                     <td>
                         @if($order->state==0)
                             <a href="{{ route('orderComplete',$order->id) }}" class="btn btn-warning" onclick="return confirm('Are you sure u finish this order?')">Pending</a>
@@ -77,7 +85,7 @@
                                                     <td>Product</td>
                                                     <td>
                                                         @foreach($order->products as $product)
-                                                            {{ $product->pivot->qty}} x {{ $product->name }} ({{ number_format($product->pivot->price) }} Kyats) @if($product->pivot->rmk)({{ $product->pivot->rmk }}) @endif<br>
+                                                            @if($product->pivot->qty>1){{ $product->pivot->qty }} x @endif{{ $product->name }} ({{ number_format($product->pivot->price) }} Kyats) @if($product->pivot->rmk)({{ $product->pivot->rmk }}) @endif<br>
                                                         @endforeach
                                                     </td>
                                                 </tr>
@@ -96,7 +104,7 @@
                                                 <tr>
                                                     <td>Remaining Days</td>
                                                     @if($order->state==0)
-                                                        <td>{{ Carbon\Carbon::now()->diffInDays($order->due_date) }} days</td>
+                                                        <td>{{ Carbon\Carbon::now()->diffInDays($order->due_date)+1 }} days</td>
                                                     @else
                                                         <td> -</td>
                                                     @endif
@@ -104,6 +112,10 @@
                                                 <tr>
                                                     <td>Due Date</td>
                                                     <td>{{ \Carbon\Carbon::parse($order->due_date)->toFormattedDateString() }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Order queue</td>
+                                                    <td>{{ $order->queue }}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
