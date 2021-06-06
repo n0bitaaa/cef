@@ -11,7 +11,7 @@
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid px-4">
-      <a class="navbar-brand ms-2" href="{{ route('frontend.index') }}">Crochet Ever After</a>
+      <a class="navbar-brand ms-2" href="{{ route('frontend.index') }}"><span style="color:#F08080;">C</span>ro<span style="color:#6495ED;">c</span>het <span style="color:#7CFC00;">E</span>ve<span style="color:#FF4500;">r</span> A<span style="color:#F4A460;">f</span>ter</a>
       <button class="navbar-toggler py-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">          <i class="fas fa-bars"></i>
       </button>
       <div class="collapse navbar-collapse text-end" id="navbarSupportedContent">
@@ -39,7 +39,13 @@
         @foreach($orders as $order)
           @if($order->state==0)
             <div class="alert alert-warning text-center" role="alert">
-              " Current working order - ({{ App\Order::where('state',0)->orderBy('queue')->first()->queue }}) "
+              " Current working order - 
+              @if(App\Order::where('state',0)->orderBy('queue')->first()->queue==$order->queue)
+                Your order({{$order->queue}}) 
+              @else 
+                ({{ App\Order::where('state',0)->orderBy('queue')->first()->queue }})
+              @endif
+              "
             </div>
           @else
             <div class="alert alert-success text-center" role="alert">
@@ -47,8 +53,8 @@
             </div>
           @endif
         @endforeach
-          <div class="table-responsive">
-            <table class="table table-bordered table-dark text-start" id="order_table">
+          <div class="table-responsive mb-3" id="order_table">
+            <table class="table table-bordered table-dark text-start m-0">
               @forelse($orders as $order)
                 <tbody>
                   <tr>
@@ -87,6 +93,10 @@
                     <td>Due Date</td>
                     <td>{{ \Carbon\Carbon::parse($order->due_date)->toFormattedDateString() }}</td>
                   </tr>
+                  <tr>
+                    <td>Order Code</td>
+                    <td>{{ $order->queue }}</td>
+                  </tr>
                 </tbody>
               @empty
               <tbody>
@@ -118,6 +128,10 @@
                   <td>Due Date</td>
                   <td>-</td>
                 </tr>
+                <tr>
+                  <td>Order Code</td>
+                  <td>-</td>
+                </tr>
               </tbody>
               @endforelse
             </table>
@@ -125,12 +139,8 @@
           <div>
             @foreach($orders as $order)
               @if($order->state==0)
-                <div class="alert alert-primary d-inline-block float-start mt-1" role="alert" id="order">
-                  Your order number - {{$order->queue}}
-                </div>
                 <button class="btn float-end text-white d-inline-block mt-1" id="download" onclick="event.preventDefault();" type="button">Download as JPG</button>
               @else
-                <div></div>
                 <button class="btn btn-primary d-inline-block mt-1 disabled float-end" id="download" type="button">Download as JPG</button>
               @endif
             @endforeach
@@ -163,16 +173,14 @@
     <script>
       $(document).ready(function(){
         $('#download').click(function(){
-          var elm = $('#order_table').get(0);
-          var lebar = "600";
-          var tinggi = "300";
+          var div = $('#order_table').get(0);
           var type="jpg";
           var filename = "cef";
-          html2canvas(elm).then(function(canvas){
+          html2canvas(div).then(function(canvas){
             var canWidth = canvas.width;
             var canHeight = canvas.height;
             var img = Canvas2Image.convertToImage(canvas,canWidth,canHeight);
-            Canvas2Image.saveAsImage(canvas,lebar,tinggi,type,filename);
+            Canvas2Image.saveAsImage(canvas,canWidth,canHeight,type,filename);
           })
         })
       })
