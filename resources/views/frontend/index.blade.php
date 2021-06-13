@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Home | Crochet Ever After</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
     <link rel="stylesheet" href="css/frontend.css">
@@ -138,11 +139,7 @@
           </div>
           <div>
             @foreach($orders as $order)
-              @if($order->state==0)
-                <button class="btn float-end text-white d-inline-block mt-1" id="download" onclick="event.preventDefault();" type="button">Download as JPG</button>
-              @else
-                <button class="btn btn-primary d-inline-block mt-1 disabled float-end" id="download" type="button">Download as JPG</button>
-              @endif
+                <a class="btn float-end text-white d-inline-block mt-1" id="download" href="{{ route('frontend.receipt') }}">Download as PDF</a>
             @endforeach
           </div>
       </div>
@@ -170,7 +167,7 @@
     <script src="{{ asset('js/canvas2image.js') }}"></script>
     <script src="{{ asset('js/html2canvas.min.js') }}"></script>
     <script src="https://kit.fontawesome.com/1e9d4689e4.js" crossorigin="anonymous"></script>
-    <script>
+    <!-- <script>
       $(document).ready(function(){
         $('#download').click(function(){
           var div = $('#order_table').get(0);
@@ -184,6 +181,6 @@
           })
         })
       })
-    </script>
+    </script> -->
 </body>
 </html>

@@ -18,7 +18,13 @@ Route::get('/','Auth\LoginController@showLoginForm')->name('login');
 
 Route::post('/','Auth\LoginController@login');
 
-Route::get('/home','FrontendController@index')->name('frontend.index')->middleware('auth');
+Route::group(['middleware' => 'auth'],function(){
+
+    Route::get('/home','FrontendController@index')->name('frontend.index');
+
+    Route::get('/receipt','FrontendController@receipt')->name('frontend.receipt');
+
+});
 
 Route::group(['prefix'=>'admin'],function(){
     Route::get('/login','Auth\LoginController@showLogin')->name('showLogin');
