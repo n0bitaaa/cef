@@ -125,14 +125,14 @@ class OrderController extends Controller
             $total += $productprice*$quantity;
         }
         $due_date = Carbon::now()->addWeeks($request->w_week);
-        $queue = Order::where('state',0)->count();
+        $final_queue = Order::where('state',0)->orderBy('queue','desc')->first()->queue;
         $order = Order::findOrFail($id);
         $order->totl_qty = array_sum($quantities);
         $order->totl_amt = $total;
         $order->state = 0;
         $order->due_date = $due_date;
         $order->w_week = $request->w_week;
-        $order->queue = $queue+1;
+        $order->queue = $final_queue+1;
         $order->admin_id = Auth::guard('admin')->user()->id;
         $order->update();
         $order->products()->newPivotStatement()->where('order_id',$id)->delete();
