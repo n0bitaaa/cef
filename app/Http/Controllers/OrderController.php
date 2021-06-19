@@ -58,7 +58,7 @@ class OrderController extends Controller
             $total += $productprice*$quantity;
         }
         $due_date = Carbon::now()->addWeeks($request->w_week);
-        $queue = Order::where('state',0)->count();
+        $queue = Order::where('state',0)->orderBy('queue','desc')->first()->queue;
         $order = Order::create([
             'totl_qty'=>array_sum($quantities),
             'totl_amt'=>$total,
