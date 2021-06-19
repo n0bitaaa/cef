@@ -42,7 +42,7 @@
             <div class="alert alert-warning text-center" role="alert">
               " Current working order - 
               @if(App\Order::where('state',0)->orderBy('queue')->first()->queue==$order->queue)
-                Your order({{$order->queue}}) 
+                Your order 
               @else 
                 ({{ App\Order::where('state',0)->orderBy('queue')->first()->queue }})
               @endif
